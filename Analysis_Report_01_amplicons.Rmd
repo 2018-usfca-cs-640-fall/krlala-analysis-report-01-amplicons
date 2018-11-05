@@ -80,7 +80,7 @@ filenames_forward_reads <- file.path(path, filenames_forward_reads)
 ```
 
 ```{r check-quality-plots}
-# Plots the quality profiles of the first twenty samples
+# Plots the quality profiles of all twenty samples
 plotQualityProfile(filenames_forward_reads[1:20])
 ```
 
@@ -97,7 +97,6 @@ filtered_reads_path <- file.path(filter_path,
 # See ?filterAndTrim for details on the parameters
 # See here for adjustments for 454 data:
 # https://benjjneb.github.io/dada2/
-# faq.html#can-i-use-dada2-with-my-454-or-ion-torrent-data
 
 filtered_output <- filterAndTrim(fwd = filenames_forward_reads,
                                  filt = filtered_reads_path,
@@ -144,7 +143,6 @@ names(dereplicated_forward_reads) <- sample_names
 # parameters adjusted based on recommendations for 454 data here:
 # https://benjjneb.github.io/dada2/
 # faq.html#can-i-use-dada2-with-my-454-or-ion-torrent-data
-
 dada_forward_reads <- dada(dereplicated_forward_reads,
                            err = errors_forward_reads,
                            HOMOPOLYMER_GAP_PENALTY = -1, # reduce penalty bc 454
@@ -295,29 +293,38 @@ plot_tree(phyloseq_obj,
 
 metadata_in %>%
   ggplot(aes(x = host_subject_id, y = sample_source )) +
-    geom_point()  
-    
+    geom_point()
 
 ```
+
+
+**Figure 3** : Examination of sample sources and host subjects shows that most of the samples obtained came from individuals M2,M3 and M9.
 
 ```{r example-phyloseq-plot-4}
 
-plot_bar(phyloseq_obj,x = "sample_source")
+plot_bar(phyloseq_obj, x = "sample_source")
     
 
 ```
+
+**Figure 4** : Th abundance of sequences and hence bacteria seem to come from the fingertip despite there being only three samples from the fingertip.
 
 ```{r example-phyloseq-plot-5}
 
 F1_phyloseq_object <- subset_samples(phyloseq_obj,
                                      host_subject_id = "F1")
-
-plot_bar(F1_phyloseq_object, 
+plot_bar(F1_phyloseq_object,
          x = "Order")
 ```
 
+**Figure 5** : This data is supposed to show the distribution of abundance of bacteria according to Order for one individual, but shows the same for the entire dataset.
 
+```{r example-phyloseq-plot-6}
+plot_net(phyloseq_obj, maxdist = 0.4, point_label = "host_subject_id",
+         color = "host_subject_id", shape = "sample_type")
+```
 
+**Figure 6** : Microbiome network representation accross samples, and surface type.
 
 
 
