@@ -1,7 +1,7 @@
 ---
 title: "Analysis Report 1: Your Title Here"
-author: "Don Francisco"
-date: "November 11, 2018"
+author: "Karan Lala"
+date: "November 4, 2018"
 output: github_document
 bibliography: references.bib
 csl: bioinformatics.csl
@@ -9,7 +9,7 @@ csl: bioinformatics.csl
 
 # Introduction
 
-Add about 1.5-2 pages here. Must cite at least 5 peer reviewed articles.
+Add about 1.5-2 pages here. Must cite at least 10 in peer reviewed articles.
 
 # Methods
 
@@ -62,7 +62,7 @@ library("phyloseq")
 ```
 
 ```{r extract-sample-and-file-names}
-# NOTE: Much of the following follows the DADA2 tutorials available here:
+# NOTE: Much of the following follows the DADA2 tutorials availablbioe here:
 # https://benjjneb.github.io/dada2/tutorial.html
 # Accessed October 19, 2017
 
@@ -80,7 +80,7 @@ filenames_forward_reads <- file.path(path, filenames_forward_reads)
 ```
 
 ```{r check-quality-plots}
-# Plots the quality profiles of all twenty samples
+# Plots the quality profiles of the first twenty samples
 plotQualityProfile(filenames_forward_reads[1:20])
 ```
 
@@ -97,7 +97,8 @@ filtered_reads_path <- file.path(filter_path,
 # See ?filterAndTrim for details on the parameters
 # See here for adjustments for 454 data:
 # https://benjjneb.github.io/dada2/
-#     faq.html#can-i-use-dada2-with-my-454-or-ion-torrent-data
+# faq.html#can-i-use-dada2-with-my-454-or-ion-torrent-data
+
 filtered_output <- filterAndTrim(fwd = filenames_forward_reads,
                                  filt = filtered_reads_path,
                                  maxLen = 300,
@@ -142,7 +143,8 @@ names(dereplicated_forward_reads) <- sample_names
 ```{r run-dada}
 # parameters adjusted based on recommendations for 454 data here:
 # https://benjjneb.github.io/dada2/
-#     faq.html#can-i-use-dada2-with-my-454-or-ion-torrent-data
+# faq.html#can-i-use-dada2-with-my-454-or-ion-torrent-data
+
 dada_forward_reads <- dada(dereplicated_forward_reads,
                            err = errors_forward_reads,
                            HOMOPOLYMER_GAP_PENALTY = -1, # reduce penalty bc 454
@@ -288,6 +290,35 @@ plot_tree(phyloseq_obj,
 ```
 
 **Figure 2**: Inferred phylogeny of sequences, with points on tips representing samples within which each particular taxa occurred. Tree represents phylogeny inferred using FastTree.
+
+```{r example-phyloseq-plot-3}
+
+metadata_in %>%
+  ggplot(aes(x = host_subject_id, y = sample_source )) +
+    geom_point()  
+    
+
+```
+
+```{r example-phyloseq-plot-4}
+
+plot_bar(phyloseq_obj,x = "sample_source")
+    
+
+```
+
+```{r example-phyloseq-plot-5}
+
+F1_phyloseq_object <- subset_samples(phyloseq_obj,
+                                     host_subject_id = "F1")
+
+plot_bar(F1_phyloseq_object, 
+         x = "Order")
+```
+
+
+
+
 
 
 # Discussion
