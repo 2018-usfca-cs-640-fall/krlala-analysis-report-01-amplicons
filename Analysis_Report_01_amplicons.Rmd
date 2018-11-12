@@ -1,7 +1,7 @@
 ---
-title: "Analysis Report 1: Your Title Here"
+title: "Analysis Report 1: Exploratory data analysis of Fierer dataset "
 author: "Karan Lala"
-date: "November 4, 2018"
+date: "November 12, 2018"
 output: github_document
 bibliography: references.bib
 csl: bioinformatics.csl
@@ -9,9 +9,33 @@ csl: bioinformatics.csl
 
 # Introduction
 
+Bacteria are ubiquitous, and human bodies are no exception. We house millions and billions of bacteria, and have them on the surface of our skin too.
+Skin and gut microbiome analysis and the use of relevant data has sharply increased, and entire companies are using these techniques to find solutions
+for ailments such as dermatological diseases. While there are many implicated causes for acne,  anaerobic bacterial species *Propionibacterium acnes* is
+considered the main culprit in the development of acne.  Infection with the parasitic mite *Demodex* is associated with the development of acne as well.
+Informed approaches are being developed to tackle issues such as acne by using microbiome data. By sampling individual's microbiome that do not have acne,
+and people that do have acne, may reveal a clear distinguishing factor so much more. Furthermore, that implies that changing the makeup of the microbiome
+to a more beneficial community can drive out acne, and similar approaches used to tackle other dermatological issues. The skin microbiota of a healthy
+adult may remain stable over time, despite the daily rustle and bustle of life, and so skin microbial communities, if sufficiently unique and identifiable,
+can be used a forensic technique.
+The microbiome is being studied extensively, and one such paper, Fierer et al, examines whether the microbiota can be used to uniquely identify individuals
+using samples from the surfaces they've touched. In this study, computer keys and mice have been used as the aforementioned surfaces. The microbial
+communities are examined, and their similarity to the sample source (fingertip) is evaluated and contrasted with the similarity to other fingertips.
+The Fierer paper recovers bacterial DNA from surfaces and examines whether it enables sufficient characterization of bacterial communities. For
+use in forensics, bacterial communities transferred from a person's skin to surface must persist for days to weeks on the surface, which is also examined.
+Pyrosequencing, an NGS ( Next generation sequencing ) method is used to sequence the 16S part of the organisms since it is highly conserved.
+
+
+In this exploratory data analysis, the metadata and data from the fingertip and keyboard samples are used with phyloseq, DADA2, ggplot2 and dplyr.
+The metadata has a lot of information, most which is standard and does not differ across samples. The difference in certain categories, coupled with
+the data on the microbial community is used to illustrate data and draw conclusions from it. While the phyloseq data can be used witht he phyloseq object,
+it can be melted for use with ggplot2.
+
 Add about 1.5-2 pages here. Must cite at least 10 in peer reviewed articles.
 
 # Methods
+
+
 
 ## Sample origin and sequencing
 
@@ -140,15 +164,12 @@ names(dereplicated_forward_reads) <- sample_names
 ```
 
 ```{r run-dada}
-# parameters adjusted based on recommendations for 454 data here:
-# https://benjjneb.github.io/dada2/
-# faq.html#can-i-use-dada2-with-my-454-or-ion-torrent-data
+
 dada_forward_reads <- dada(dereplicated_forward_reads,
                            err = errors_forward_reads,
-                           HOMOPOLYMER_GAP_PENALTY = -1, # reduce penalty bc 454
-                           BAND_SIZE = 32) # performs local alignments bc indels
+                           HOMOPOLYMER_GAP_PENALTY = -1,
+                           BAND_SIZE = 32)
 
-# check dada results
 dada_forward_reads
 ```
 
@@ -307,12 +328,12 @@ plot_bar(phyloseq_obj, x = "sample_source")
 
 ```
 
-**Figure 4** : Th abundance of sequences and hence bacteria seem to come from the fingertip despite there being only three samples from the fingertip.
+**Figure 4** : The abundance of sequences and hence bacteria seem to come from the fingertip despite there being only three samples from the fingertip.
 
 ```{r example-phyloseq-plot-5}
 
 F1_phyloseq_object <- subset_samples(phyloseq_obj,
-                                     host_subject_id = "F1")
+                                     host_subject_id == "M9")
 plot_bar(F1_phyloseq_object,
          x = "Order")
 ```
@@ -326,7 +347,33 @@ plot_net(phyloseq_obj, maxdist = 0.4, point_label = "host_subject_id",
 
 **Figure 6** : Microbiome network representation accross samples, and surface type.
 
+```{r example-phyloseq-plot-7}
 
+plot_richness(phyloseq_obj,
+              x = "host_subject_id",
+              measures = c("Shannon", "Simpson"),
+              color = "sample_type") +
+  xlab("Sample origin") +
+  geom_jitter(width = 0.2) +
+  theme_bw()
+```
+
+
+
+
+
+```{r example-phyloseq-plot-8}
+
+spacebar_phyloseq_object <- subset_samples(phyloseq_obj,
+                                     sample_source == "Space_bar")
+plot_richness(spacebar_phyloseq_object,
+              x = "host_subject_id",
+              measures = c("Shannon", "Simpson"),
+              color = "sample_type") +
+  xlab("Sample origin") +
+  geom_jitter(width = 0.2) +
+  theme_bw()
+```
 
 # Discussion
 
