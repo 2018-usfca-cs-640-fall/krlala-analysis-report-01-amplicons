@@ -35,16 +35,29 @@ Add about 1.5-2 pages here. Must cite at least 10 in peer reviewed articles.
 
 # Methods
 
-Bacterial communities found on individuals fingers were compared with the communities obtained from keys on 3 different keyboards, and keys from a few other keyboards to see how well they matched the fingertip samples in question. Individual keys and the fingertip of the owner were swabbed, and these swabs were stored at -80'C before extracting DNA.
+Bacterial communities found on individuals fingers were compared with the communities obtained from keys on 3 different keyboards, and keys from a few other keyboards to see how well they matched the fingertip samples in question. Individual keys and the fingertip of the owner were swabbed, and these swabs were stored at -80'C before extracting DNA. Amplicon DNA concentrations were measured using the Quant-iT PicoGreen dsDNA reagent and kit.The entire exposed surface of each keyboard key was swabbed lightly for 10 s. All swabs were stored at −80 °C for less than 1 week before DNA extraction.
 
-## Sample origin and sequencing
+# Sample origin and sequencing
 
-Samples came from computer keys and fingertips.Swabbing of samples was performed using autoclaved cotton-tipped swabs pre-moistened with a sterile solution. DNA collected using “MO BIO PowerSoil” DNA Isolation kit, 16S rRNA genes camplified by PCR. PyroSequencing was then carried out by 454 Life Sciences Genome Sequencer FLX instrument and sequences with less than 200 or more than 300 base pairs were removed from the analysis.
+Samples came from computer keys and fingertips.Swabbing of samples was performed using autoclaved cotton-tipped swabs pre-moistened with a sterile solution. DNA collected using “MO BIO PowerSoil” DNA Isolation kit, 16S rRNA genes camplified by PCR. PyroSequencing was then carried out by 454 Life Sciences Genome Sequencer FLX instrument and sequences with less than 200 or more than 300 base pairs, contained ambiguous characters,
+contained an uncorrectable barcode, or did not contain the primer sequence were removed from the analysis.
 
 
 ## Computational
 
-These are the methods you used. Should probably be at least a half of a page. At a very minimum should include citations for DADA2 [@callahan2016] and phyloseq [@mcmurdie2013]. Note that these don't count towards the five references you need to cite in the introduction.
+DADA2 starts with set of Illumina-sequenced paired-end fastq files that have been split, sample wise and from which the barcodes/adapters have already
+been removed. The final product is an amplicon sequence variant (ASV) table, a higher-resolution analogue of the traditional OTU table,
+which records the number of times each exact amplicon sequence variant was observed in each sample.
+Taxonomy is then assigned and data can be imported into the popular phyloseq R package for the analysis of microbiome data.
+Quality profiles for forward and reverse reads are genereated and DADA2 incorporates quality information into its models, for example accounting to Some
+extent for the low base quality reads at the end of sequences. It then filters and trims the data. DADA2 builds an error model from the data, and starts
+with an initial guess, as do machine learning techniques.
+Dereplication combines all identical sequencing reads into into “unique sequences” with a corresponding “abundance” equal to the number of reads with
+that unique sequence. Dereplication substantially reduces computation time by eliminating redundant comparisons. Now, DADA2 merges the forward and
+reverse reads together to obtain the full denoised sequences and constructs a sequence variant table by traditional methods.
+Next, it removes chimeras and provides a native implementation of the naive Bayesian classifier method for assigning taxonomy. Finally, this data
+generated can be used with phyloseq.
+The phyloseq package is a tool to import, store, analyze, and graphically display complex phylogenetic sequencing data that has already been clustered into Operational Taxonomic Units (OTUs), especially when there is associated sample data, phylogenetic tree, and/or taxonomic assignment of the OTUs. This package leverages many of the tools available in R for ecology and phylogenetic analysis (vegan, ade4, ape, picante), while also using advanced/flexible graphic systems (ggplot2) to easily produce publication-quality graphics of complex phylogenetic data.
 
 # Results
 
@@ -399,7 +412,39 @@ plot_richness(spacebar_phyloseq_object,
 
 # Discussion
 
-Add around 2-3 pages interpreting your results and considering future directions one might take in analyzing these data.
+The data and most of the samples have been obtained from three individuals. The spacebar key was swabbed for other individuals too, and allows the
+researchers to distinguish them from the samples from the main subjects and compare them to the microbial community obtained from the respective
+fingertips. For this project, more data on the other samples would have allowed for much better exploratory data analysis. A cursory figure on the
+abundance of bacteria across all samples according to the taxa, "Order" shows that the Order *Actinomycetales* is highly present. This particular Order
+is not present selectively in just some samples, but is found in high quantities in nearly all samples. The presence of this Order in such quantities may
+indicate that the bacteria from this Order are found in large quantities across human fingertips and are successfully transferred from the fingertip to the
+surface. A closer look at the data, looking at the Family responsible for the abundance of *Actinomycetales* is *Propionibacteriaceae*.
+Propionibacteriaceae are a family of gram positive bacteria found in dairy products or in the intestinal tracts of animals and living in the pores of
+humans, according to online sources. This family of bacteria is generally non pathogenic. Some species can contaminate blood or even cause certain
+infections, and acne.
+There are many ways to use the data, and explore new ways to use them and reach surprising information. One suspicion I have is that the samples may
+have been contaminated with some species of the Propionibacteriacea family. Certain bacteria can be found on certain categories of humans more often than
+others, and in different abundance. For example, the Propionibacterium can reportedly be found on individuals just before they reach sexual maturity.
+Just pre-pubescent humans, pregnant women etc. can all have different skin microbiota, and they can differ in the finger/palm microbiome community by
+just a few species.
+
+It would also be productive to sample different regions of the skin. Skin is the largest organ, and even in this study, for the "storage" part of the
+study, they utilised swabs from armpits for more biomass. While swabbing body parts other than the fingertip and palm does not make sense for forensic
+analysis, in future studies different parts of the body should also be sampled to compare the difference in microbiota in external bodily surfaces
+and the reason for the exhibited bacterial community. This would allow building of models and databases that can hypothesize the microbial community
+composition for certain areas of the skin, and what community profile most healthy individuals exhibit. This can be contrasted against people with
+dermatological issues, to help identify possible disease causing agents, and even develop therapies to provide beneficial bacteria while decreasing
+the harmful one, monitoring the change in the community and its effect on symptoms and the disease overall.
+The paper includes the following lines : ". All three individuals were healthy at the time of sampling, had not taken antibiotics for at least 6 months,
+and were between 20 and 35 years of age. Two of these individuals shared the same office space." As seen in the latter figures of this report, the
+individuals M3 and M9 have relatively similar microbiomes. The data shows a significant difference between the microbiome community of M2 as compared
+to the other two individuals.
+
+The lines from the original study, coupled with the visualization of data seen indicate that the two individuals could have had contact before the
+sampling was performed. That is a possible explanation for the similarity seen in their microbial profiles. Another possible explanation is that
+since the share the same office space, its their environment that shaped their skin microbiome to some extent. It's also possible that since these
+individuals share the office space, they share common objects, and since the microbial community transfers to the surface, that could simply explain
+why there is such similarity seen.
 
 # Sources Cited
 
