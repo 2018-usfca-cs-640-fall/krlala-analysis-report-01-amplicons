@@ -35,11 +35,12 @@ Add about 1.5-2 pages here. Must cite at least 10 in peer reviewed articles.
 
 # Methods
 
-
+Bacterial communities found on individuals fingers were compared with the communities obtained from keys on 3 different keyboards, and keys from a few other keyboards to see how well they matched the fingertip samples in question. Individual keys and the fingertip of the owner were swabbed, and these swabs were stored at -80'C before extracting DNA.
 
 ## Sample origin and sequencing
 
-Add about half a page here. In this section instead of first person (I/we), use Fierer et al., since you'll just be describing what they did, based on the methods in their paper.
+Samples came from computer keys and fingertips.Swabbing of samples was performed using autoclaved cotton-tipped swabs pre-moistened with a sterile solution. DNA collected using “MO BIO PowerSoil” DNA Isolation kit, 16S rRNA genes camplified by PCR. PyroSequencing was then carried out by 454 Life Sciences Genome Sequencer FLX instrument and sequences with less than 200 or more than 300 base pairs were removed from the analysis.
+
 
 ## Computational
 
@@ -313,9 +314,8 @@ plot_tree(phyloseq_obj,
 ```{r example-phyloseq-plot-3}
 
 metadata_in %>%
-  ggplot(aes(x = host_subject_id, y = sample_source )) +
+  ggplot(aes(x = host_subject_id, y = sample_source)) +
     geom_point()
-
 ```
 
 
@@ -323,31 +323,51 @@ metadata_in %>%
 
 ```{r example-phyloseq-plot-4}
 
-plot_bar(phyloseq_obj, x = "sample_source")
-    
 
-```
-
-**Figure 4** : The abundance of sequences and hence bacteria seem to come from the fingertip despite there being only three samples from the fingertip.
-
-```{r example-phyloseq-plot-5}
-
-F1_phyloseq_object <- subset_samples(phyloseq_obj,
-                                     host_subject_id == "M9")
-plot_bar(F1_phyloseq_object,
+plot_bar(phyloseq_obj,
          x = "Order")
 ```
 
-**Figure 5** : This data is supposed to show the distribution of abundance of bacteria according to Order for one individual, but shows the same for the entire dataset.
+**Figure 4** : The abundance of sequence across hosts is visualized, colored for Order. Shows increased presence of Order *Actinomycetales*.
+
+```{r example-phyloseq-plot-5}
+
+
+plot_bar(phyloseq_obj,
+         x = "Family")
+```
+
+**Figure 5** : This data shows the distribution of abundance of bacteria by Family, with highest abundance seen in *Propionibacteriaceae*.
+
 
 ```{r example-phyloseq-plot-6}
+
+m9_phyloseq_object <- subset_samples(phyloseq_obj,
+                                     host_subject_id == "M9")
+plot_bar(m9_phyloseq_object,
+         x = "Family")
+```
+
+**Figure 6** : This data shows the distribution of abundance of bacteria by Family for one individual, "M9", with highest abundance seen in *Propionibacteriaceae*.
+
+```{r example-phyloseq-plot-7}
+
+l1_phyloseq_object <- subset_samples(phyloseq_obj,
+                                     host_subject_id == "L1")
+plot_bar(l1_phyloseq_object,
+         x = "Family")
+```
+
+**Figure 7** : This data shows the distribution of abundance of bacteria by Family for one individual, "L1", with highest abundance seen in *Propionibacteriaceae*.
+
+```{r example-phyloseq-plot-8}
 plot_net(phyloseq_obj, maxdist = 0.4, point_label = "host_subject_id",
          color = "host_subject_id", shape = "sample_type")
 ```
 
-**Figure 6** : Microbiome network representation accross samples, and surface type.
+**Figure 8** : Microbiome network representation across samples, and surface type.
 
-```{r example-phyloseq-plot-7}
+```{r example-phyloseq-plot-9}
 
 plot_richness(phyloseq_obj,
               x = "host_subject_id",
@@ -362,7 +382,7 @@ plot_richness(phyloseq_obj,
 
 
 
-```{r example-phyloseq-plot-8}
+```{r example-phyloseq-plot-10}
 
 spacebar_phyloseq_object <- subset_samples(phyloseq_obj,
                                      sample_source == "Space_bar")
@@ -374,6 +394,8 @@ plot_richness(spacebar_phyloseq_object,
   geom_jitter(width = 0.2) +
   theme_bw()
 ```
+
+
 
 # Discussion
 
