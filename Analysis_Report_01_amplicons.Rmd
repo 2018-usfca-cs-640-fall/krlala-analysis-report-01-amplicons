@@ -1,52 +1,61 @@
 ---
 title: "Analysis Report 1: Exploratory data analysis of Fierer dataset "
+
 author: "Karan Lala"
+
 date: "November 12, 2018"
+
 output: github_document
+
 bibliography: references.bib
+
 csl: bioinformatics.csl
 ---
 
 # Introduction
 
 Bacteria are ubiquitous, and human bodies are no exception. We house millions and billions of bacteria, and have them on the surface of our skin too.
-Skin and gut microbiome analysis and the use of relevant data has sharply increased, and entire companies are using these techniques to find solutions
-for ailments such as dermatological diseases. While there are many implicated causes for acne,  anaerobic bacterial species *Propionibacterium acnes* is
+[@turnbaugh2007human]Skin and gut microbiome analysis and the use of relevant data has sharply increased, and entire companies are using these techniques to find solutions
+for ailments such as dermatological diseases.[@venturelli2018deciphering] While there are many implicated causes for acne,  anaerobic bacterial species *Propionibacterium acnes* is
 considered the main culprit in the development of acne.  Infection with the parasitic mite *Demodex* is associated with the development of acne as well.
 Informed approaches are being developed to tackle issues such as acne by using microbiome data. By sampling individual's microbiome that do not have acne,
 and people that do have acne, may reveal a clear distinguishing factor so much more. Furthermore, that implies that changing the makeup of the microbiome
 to a more beneficial community can drive out acne, and similar approaches used to tackle other dermatological issues. The skin microbiota of a healthy
 adult may remain stable over time, despite the daily rustle and bustle of life, and so skin microbial communities, if sufficiently unique and identifiable,
-can be used a forensic technique.
-The microbiome is being studied extensively, and one such paper, Fierer et al, examines whether the microbiota can be used to uniquely identify individuals
+can be used a forensic technique.[@grice2009topographical]
+
+The microbiome is being studied extensively, and one such paper, Fierer et al, examines whether the microbiota can be used to uniquely[@grice2008diversity] identify individuals
 using samples from the surfaces they've touched. In this study, computer keys and mice have been used as the aforementioned surfaces. The microbial
 communities are examined, and their similarity to the sample source (fingertip) is evaluated and contrasted with the similarity to other fingertips.
-The Fierer paper recovers bacterial DNA from surfaces and examines whether it enables sufficient characterization of bacterial communities. For
+The Fierer paper recovers bacterial DNA from surfaces and examines whether it enables sufficient characterization of bacterial communities.The diversity of skin-associated bacterial communities was surprisingly high; a typical hand surface harbored >150 unique species-level bacterial phylotypes[@fierer2010forensic] For
 use in forensics, bacterial communities transferred from a person's skin to surface must persist for days to weeks on the surface, which is also examined.
 Pyrosequencing, an NGS ( Next generation sequencing ) method is used to sequence the 16S part of the organisms since it is highly conserved.
+Work on the microbiome of multiple home surfaces has shown that the microbial signature of a family can be highly predictive of the microbiome of that family’s home and that individuals within a home can be differentiated.
+Recent work has shown that postmortem, the microbiome of animal hosts changes dramatically, but in a predictable manner. 
 
-
+Microbial interaction between human-associated objects and the environments inhabited may have forensic implications, and the extent to which microbes are shared between individuals inhabiting the same space may be relevant to human health and disease transmission. For certain persons, babies and immunocompromised individuals for example, human
+interaction could serverly affect them by transfer of microbial communities.
 In this exploratory data analysis, the metadata and data from the fingertip and keyboard samples are used with phyloseq, DADA2, ggplot2 and dplyr.
 The metadata has a lot of information, most which is standard and does not differ across samples. The difference in certain categories, coupled with
 the data on the microbial community is used to illustrate data and draw conclusions from it. While the phyloseq data can be used witht he phyloseq object,
 it can be melted for use with ggplot2.
 
-Add about 1.5-2 pages here. Must cite at least 10 in peer reviewed articles.
+
 
 # Methods
 
-Bacterial communities found on individuals fingers were compared with the communities obtained from keys on 3 different keyboards, and keys from a few other keyboards to see how well they matched the fingertip samples in question. Individual keys and the fingertip of the owner were swabbed, and these swabs were stored at -80'C before extracting DNA. Amplicon DNA concentrations were measured using the Quant-iT PicoGreen dsDNA reagent and kit.The entire exposed surface of each keyboard key was swabbed lightly for 10 s. All swabs were stored at −80 °C for less than 1 week before DNA extraction.
+Bacterial communities found on individuals fingers were compared with the communities obtained from keys on 3 different keyboards, and keys from a few other keyboards to see how well they matched the fingertip samples in question. Individual keys and the fingertip of the owner were swabbed, and these swabs were stored at -80'C before extracting DNA. Amplicon DNA concentrations were measured using the Quant-iT PicoGreen dsDNA reagent and kit.The entire exposed surface of each keyboard key was swabbed lightly for 10 s. All swabs were stored at −80 °C for less than 1 week before DNA extraction.[@cole2008ribosomal]
 
 # Sample origin and sequencing
 
 Samples came from computer keys and fingertips.Swabbing of samples was performed using autoclaved cotton-tipped swabs pre-moistened with a sterile solution. DNA collected using “MO BIO PowerSoil” DNA Isolation kit, 16S rRNA genes camplified by PCR. PyroSequencing was then carried out by 454 Life Sciences Genome Sequencer FLX instrument and sequences with less than 200 or more than 300 base pairs, contained ambiguous characters,
-contained an uncorrectable barcode, or did not contain the primer sequence were removed from the analysis.
+contained an uncorrectable barcode, or did not contain the primer sequence were removed from the analysis. Samples were obtained from three computers, and a number of public and private keyboards for more data.
 
 
 ## Computational
 
 DADA2 starts with set of Illumina-sequenced paired-end fastq files that have been split, sample wise and from which the barcodes/adapters have already
-been removed. The final product is an amplicon sequence variant (ASV) table, a higher-resolution analogue of the traditional OTU table,
+been removed.[@callahan2016] The final product is an amplicon sequence variant (ASV) table, a higher-resolution analogue of the traditional OTU table,
 which records the number of times each exact amplicon sequence variant was observed in each sample.
 Taxonomy is then assigned and data can be imported into the popular phyloseq R package for the analysis of microbiome data.
 Quality profiles for forward and reverse reads are genereated and DADA2 incorporates quality information into its models, for example accounting to Some
@@ -57,13 +66,12 @@ that unique sequence. Dereplication substantially reduces computation time by el
 reverse reads together to obtain the full denoised sequences and constructs a sequence variant table by traditional methods.
 Next, it removes chimeras and provides a native implementation of the naive Bayesian classifier method for assigning taxonomy. Finally, this data
 generated can be used with phyloseq.
-The phyloseq package is a tool to import, store, analyze, and graphically display complex phylogenetic sequencing data that has already been clustered into Operational Taxonomic Units (OTUs), especially when there is associated sample data, phylogenetic tree, and/or taxonomic assignment of the OTUs. This package leverages many of the tools available in R for ecology and phylogenetic analysis (vegan, ade4, ape, picante), while also using advanced/flexible graphic systems (ggplot2) to easily produce publication-quality graphics of complex phylogenetic data.
+The phyloseq package is a tool to import, store, analyze, and graphically display complex phylogenetic sequencing data that has already been clustered into Operational Taxonomic Units (OTUs), especially when there is associated sample data, phylogenetic tree, and/or taxonomic assignment of the OTUs.[@mcmurdie2013] This package leverages many of the tools available in R for ecology and phylogenetic analysis (vegan, ade4, ape, picante), while also using advanced/flexible graphic systems (ggplot2) to easily produce publication-quality graphics of complex phylogenetic data.
 
 # Results
 
-In addition to a minimum of 3-4 figures/tables (and associated captions), you should include sufficient text in this section to describe what your findings were. Remember that in the results section you just describe what you found, but you don't interpret it - that happens in the discussion.
 
-```{r load-libraries, message = FALSE}
+```{r load-libraries, message = FALSE, include=FALSE}
 # Be sure to install these packages before running this script
 # They can be installed either with the intall.packages() function
 # or with the 'Packages' pane in RStudio
@@ -99,7 +107,7 @@ library("mctoolsr")
 library("phyloseq")
 ```
 
-```{r extract-sample-and-file-names}
+```{r extract-sample-and-file-names, include=FALSE}
 # NOTE: Much of the following follows the DADA2 tutorials availablbioe here:
 # https://benjjneb.github.io/dada2/tutorial.html
 # Accessed October 19, 2017
@@ -117,14 +125,14 @@ sample_names <- sapply(strsplit(filenames_forward_reads, "\\."), `[`, 1)
 filenames_forward_reads <- file.path(path, filenames_forward_reads)
 ```
 
-```{r check-quality-plots}
+```{r check-quality-plots, include=FALSE}
 # Plots the quality profiles of all twenty samples
 plotQualityProfile(filenames_forward_reads[1:20])
 ```
 
 We can see from the quality profiles that most reads tend to get pretty bad in quality after around 200 bases. 
 
-```{r filter-reads}
+```{r filter-reads, include=FALSE}
 # Place filtered files in filtered/ subdirectory
 # note this will fail if the directory doesn't exist
 filter_path <- file.path("output", "filtered")
@@ -147,7 +155,7 @@ filtered_output <- filterAndTrim(fwd = filenames_forward_reads,
                                  multithread = FALSE)
 ```
 
-```{r filtered-read-counts-table}
+```{r filtered-read-counts-table, include=FALSE}
 # produce nicely-formatted markdown table of read counts
 # before/after trimming
 kable(filtered_output,
@@ -155,20 +163,20 @@ kable(filtered_output,
                     "Reads Out"))
 ```
 
-```{r learn-errors}
+```{r learn-errors, include=FALSE}
 # this build error models from each of the samples
 errors_forward_reads <- learnErrors(filtered_reads_path,
                                     multithread = FALSE)
 ```
 
-```{r visualize-errors-with-plots}
+```{r visualize-errors-with-plots, include=FALSE}
 # quick check to see if error models match data
 # (black lines match black points) and are generally decresing left to right
 plotErrors(errors_forward_reads,
            nominalQ = TRUE)
 ```
 
-```{r dereplicate-sequences}
+```{r dereplicate-sequences, include=FALSE}
 # get rid of any duplicated sequences
 dereplicated_forward_reads <- derepFastq(filtered_reads_path,
                                          verbose = TRUE)
@@ -177,7 +185,7 @@ dereplicated_forward_reads <- derepFastq(filtered_reads_path,
 names(dereplicated_forward_reads) <- sample_names
 ```
 
-```{r run-dada}
+```{r run-dada, include=FALSE}
 
 dada_forward_reads <- dada(dereplicated_forward_reads,
                            err = errors_forward_reads,
@@ -187,21 +195,21 @@ dada_forward_reads <- dada(dereplicated_forward_reads,
 dada_forward_reads
 ```
 
-```{r make-sequence-table}
+```{r make-sequence-table, include=FALSE}
 # produce the 'site by species matrix'
 sequence_table <- makeSequenceTable(dada_forward_reads)
 ```
 
 The output table has `r nrow(sequence_table)` rows (samples) and `r ncol(sequence_table)` columns (sequence variants). Notice how we can embed R code directly in our markdown text.
 
-```{r histogram-of-sequence-lengths}
+```{r histogram-of-sequence-lengths, include=FALSE}
 # Quick check to look at distribution of trimmed and denoised sequences
 hist(nchar(getSequences(sequence_table)),
      main = "Histogram of final sequence variant lengths",
      xlab = "Sequence length in bp")
 ```
 
-```{r remove-chimeras}
+```{r remove-chimeras, include=FALSE}
 # Check for and remove chimeras
 sequence_table_nochim <- removeBimeraDenovo(sequence_table,
                                             method = "consensus",
@@ -215,7 +223,7 @@ non_chimeric_reads <- round(sum(sequence_table_nochim) / sum(sequence_table),
 
 After removing chimeras, we were left with `r non_chimeric_reads`% of our cleaned reads.
 
-```{r table-of-pipeline-read-counts}
+```{r table-of-pipeline-read-counts,include=FALSE}
 # Build a table showing how many sequences remain at each step of the pipeline
 get_n <- function(x) sum(getUniques(x)) # make a quick function
 track <- cbind(filtered_output, # already has 2 columns
@@ -237,7 +245,7 @@ rownames(track) <- sample_names
 kable(track)
 ```
 
-```{r assign-taxonomy}
+```{r assign-taxonomy, include=FALSE}
 # assigns taxonomy to each sequence variant based on a supplied training set
 # made up of known sequences
 taxa <- assignTaxonomy(sequence_table_nochim,
@@ -249,7 +257,7 @@ taxa <- assignTaxonomy(sequence_table_nochim,
 unname(taxa)
 ```
 
-```{r extract-sequences-to-fasta}
+```{r extract-sequences-to-fasta, include=FALSE}
 # we want to export the cleaned, trimmed, filtered, denoised sequence variants
 # so that we can build a phylogeny - we'll build the phylogeny outside of R
 # but we need the fasta file to do so. We keep the names of each sequence as the
@@ -276,7 +284,7 @@ export_taxa_table_and_seqs(sequence_table_nochim,
 ```
 
 
-```{r read-in-metadata-and-create-phyloseq}
+```{r read-in-metadata-and-create-phyloseq, include=FALSE}
 # Next we want to read in the metadata file so we can add that in too
 # This is not a csv file, so we have to use a slightly different syntax
 # here the `sep = "\t"` tells the function that the data are tab-delimited
@@ -313,7 +321,7 @@ plot_richness(phyloseq_obj,
   theme_bw()
 ```
 
-**Figure 1**: Alpha diversity measures of the two sample types, colored by gender.
+**Figure 1**: Alpha diversity measures of the two sample types, colored by gender. While the data is well represented, it does not provide any obvious conclusions.
 
 ```{r example-phyloseq-plot-2}
 # phylogeny, yay!
@@ -325,36 +333,39 @@ plot_tree(phyloseq_obj,
 **Figure 2**: Inferred phylogeny of sequences, with points on tips representing samples within which each particular taxa occurred. Tree represents phylogeny inferred using FastTree.
 
 ```{r example-phyloseq-plot-3}
-
+#The metadata_in dataset is piped to ggplot and visualized with x and y labels
+#below in a point graph as indicated by geom_point
 metadata_in %>%
   ggplot(aes(x = host_subject_id, y = sample_source)) +
     geom_point()
 ```
 
 
-**Figure 3** : Examination of sample sources and host subjects shows that most of the samples obtained came from individuals M2,M3 and M9.
+**Figure 3** : Examination of sample sources and host subjects shows that most of the samples obtained came from individuals M2,M3 and M9. The spacebar key was swabbed for every individual, and M2,M3,M9 are the target of the study and have a lot more samples.
 
 ```{r example-phyloseq-plot-4}
-
+#A simple bar plot made using the phyloseq object
+#with abundance on the y axis, and the order on the x axis
 
 plot_bar(phyloseq_obj,
          x = "Order")
 ```
 
-**Figure 4** : The abundance of sequence across hosts is visualized, colored for Order. Shows increased presence of Order *Actinomycetales*.
+**Figure 4** : The abundance of sequence across hosts is visualized, colored for Order. Shows increased presence of Order *Actinomycetales*. 
 
 ```{r example-phyloseq-plot-5}
-
-
+# A simple bar plot made using the phyloseq object with
+#abundance on the y axis, and the Family on the x axis.
 plot_bar(phyloseq_obj,
          x = "Family")
 ```
 
-**Figure 5** : This data shows the distribution of abundance of bacteria by Family, with highest abundance seen in *Propionibacteriaceae*.
+**Figure 5** : This data shows the distribution of abundance of bacteria by Family, with highest abundance seen in *Propionibacteriaceae*. This is a closer look at the data seen earlier as Family is more specific than Order.
 
 
 ```{r example-phyloseq-plot-6}
-
+# From the whole dataset i.e. phyloseq_obj, a subset, only for host M9 is
+#stored in a new object and that is used for data visualization.
 m9_phyloseq_object <- subset_samples(phyloseq_obj,
                                      host_subject_id == "M9")
 plot_bar(m9_phyloseq_object,
@@ -364,7 +375,8 @@ plot_bar(m9_phyloseq_object,
 **Figure 6** : This data shows the distribution of abundance of bacteria by Family for one individual, "M9", with highest abundance seen in *Propionibacteriaceae*.
 
 ```{r example-phyloseq-plot-7}
-
+# From the whole dataset i.e. phyloseq_obj, a subset, only for host
+#L1 is stored in a new object and that is used for data visualization.
 l1_phyloseq_object <- subset_samples(phyloseq_obj,
                                      host_subject_id == "L1")
 plot_bar(l1_phyloseq_object,
@@ -374,6 +386,8 @@ plot_bar(l1_phyloseq_object,
 **Figure 7** : This data shows the distribution of abundance of bacteria by Family for one individual, "L1", with highest abundance seen in *Propionibacteriaceae*.
 
 ```{r example-phyloseq-plot-8}
+# A plot network is created with the label and color both for host_subject_id
+#and shapes for sample type.
 plot_net(phyloseq_obj, maxdist = 0.4, point_label = "host_subject_id",
          color = "host_subject_id", shape = "sample_type")
 ```
@@ -381,7 +395,11 @@ plot_net(phyloseq_obj, maxdist = 0.4, point_label = "host_subject_id",
 **Figure 8** : Microbiome network representation across samples, and surface type.
 
 ```{r example-phyloseq-plot-9}
-
+# Creates an alpha diversity plot as seen before,
+#but is visualized to see differences between hosts.
+#xlab labels the x axis while the rest are styling. This uses the
+#Shannon and Simpson method of
+#measuring alpha diversity.
 plot_richness(phyloseq_obj,
               x = "host_subject_id",
               measures = c("Shannon", "Simpson"),
@@ -391,8 +409,7 @@ plot_richness(phyloseq_obj,
   theme_bw()
 ```
 
-
-
+**Figure 9** : Alpha diversity measures according to sample origin are visualized and seems to correlate with figure preceding this.
 
 
 ```{r example-phyloseq-plot-10}
@@ -408,7 +425,7 @@ plot_richness(spacebar_phyloseq_object,
   theme_bw()
 ```
 
-
+**Figure 10** : This figure looks at alpha diversity measures for only samples from the spacebar key, which has samples from each individual.
 
 # Discussion
 
@@ -421,30 +438,43 @@ indicate that the bacteria from this Order are found in large quantities across 
 surface. A closer look at the data, looking at the Family responsible for the abundance of *Actinomycetales* is *Propionibacteriaceae*.
 Propionibacteriaceae are a family of gram positive bacteria found in dairy products or in the intestinal tracts of animals and living in the pores of
 humans, according to online sources. This family of bacteria is generally non pathogenic. Some species can contaminate blood or even cause certain
-infections, and acne.
+infections, and acne. A future direction could be to obtain samples from these individuals again, and others, and examine whether the original individuals who provided the sample had a change in their microbial community.
+If this family is indeed found in high abundance on most humans samples, further work should be done in identifying which genus and species the relevant bacteria belongs to. This can be especially imporatant and idffer greatly among geographically different areas due to different levels of humidity, population and any number of factors.
+
+The data from the final figure illustrates the alpha diversity for samples obtained from different sources for the 
+spacebar key. It seems to be diverse, but since this is a very small sample size, it is difficult to draw any conclusions from it.
+
 There are many ways to use the data, and explore new ways to use them and reach surprising information. One suspicion I have is that the samples may
 have been contaminated with some species of the Propionibacteriacea family. Certain bacteria can be found on certain categories of humans more often than
 others, and in different abundance. For example, the Propionibacterium can reportedly be found on individuals just before they reach sexual maturity.
 Just pre-pubescent humans, pregnant women etc. can all have different skin microbiota, and they can differ in the finger/palm microbiome community by
-just a few species.
+just a few species.[@charlson2010disordered]
+Women may have different microbial environments than men, and even for the skin microbiome, marker species can be
+potentially isolated that could help forensics. Even if the microbial community doesn't accurately match to a single individual, it could help in suspect profiling.
+Markers can help eliminate suspects and save immensely on police time. Detectives frequently follow leads, and may end up following a number of dead end leads and exhausting all possible suspects and options. Development of microbial community fingerprinting can be used as a way of trimming down pools of suspects, or atleast prioritising them, while at the same time exonerating innocent parties.
 
+For this to be legitimately reliable as hard evidence to be accepted by the courts, this technique needs many more studies and stronger data supporting its identification technique.[@schmedes2017forensic] Other surfaces, especially phones could also be explored as sasmple sources.[@lax2015forensic]
 It would also be productive to sample different regions of the skin. Skin is the largest organ, and even in this study, for the "storage" part of the
-study, they utilised swabs from armpits for more biomass. While swabbing body parts other than the fingertip and palm does not make sense for forensic
+study, they utilised swabs from armpits for more biomass. [@costello2009bacterial]While swabbing body parts other than the fingertip and palm does not make sense for forensic
 analysis, in future studies different parts of the body should also be sampled to compare the difference in microbiota in external bodily surfaces
 and the reason for the exhibited bacterial community. This would allow building of models and databases that can hypothesize the microbial community
 composition for certain areas of the skin, and what community profile most healthy individuals exhibit. This can be contrasted against people with
 dermatological issues, to help identify possible disease causing agents, and even develop therapies to provide beneficial bacteria while decreasing
 the harmful one, monitoring the change in the community and its effect on symptoms and the disease overall.
-The paper includes the following lines : ". All three individuals were healthy at the time of sampling, had not taken antibiotics for at least 6 months,
+Also interesting would be the following the change in the community after washing hands, with or without different soap formulas, and examining the transference of microbial communities and intermingling when two individuals shake hands.[@fierer2008influence]
+The Fierer paper includes the following lines : ". All three individuals were healthy at the time of sampling, had not taken antibiotics for at least 6 months,
 and were between 20 and 35 years of age. Two of these individuals shared the same office space." As seen in the latter figures of this report, the
 individuals M3 and M9 have relatively similar microbiomes. The data shows a significant difference between the microbiome community of M2 as compared
 to the other two individuals.
+
+Microbial communities show unique structure and composition based on surface type, the identity of the person interacting with the surface, and geographic location. While it is possible to infer individual identities based on the microbial community associated with surfaces, it is less likely that this assemblage could be used to track where that person has been recently located in space due to the rapid turnover of the surface-associated microbial community. The personalized-nature of the human microbiome and the distinct community types associated with urban and built environments may play a significant role in future forensic investigations.
+It would also be worthwhile to figure out which part of the microbial community of the skin/palm is fleeting, and depends or changes due to daily or less frequent interaction. Evaluating people and samples with changing lifestyles and who travel frequently can help do introduce some variation, and can serve as a validation for using microbial communities as a 'fingerprint'.
 
 The lines from the original study, coupled with the visualization of data seen indicate that the two individuals could have had contact before the
 sampling was performed. That is a possible explanation for the similarity seen in their microbial profiles. Another possible explanation is that
 since the share the same office space, its their environment that shaped their skin microbiome to some extent. It's also possible that since these
 individuals share the office space, they share common objects, and since the microbial community transfers to the surface, that could simply explain
-why there is such similarity seen.
+why there is such similarity seen. This again illustrates the need for a much larger and more diverse sample size.
 
 # Sources Cited
 
